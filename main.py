@@ -100,3 +100,13 @@ class MultiHeadAttention(nn.Module):
         x = x.contiguous().view(x.shape[0], x.shape[1], self.num_heads * self.d_k)
 
         return self.w_o(x), output, attention_scores
+
+class ResidualConnection(nn.Module):
+    def __init__(self,d_model,dropout):
+        super().__init__()
+        self.d_model = d_model
+        self.dropout = nn.Dropout(dropout)
+        self.norm = LayerNormalisation(d_model)
+    def forward(self,x,sublayer):
+        x = x + self.dropout(sublayer(self.norm(x))) 
+        return x
