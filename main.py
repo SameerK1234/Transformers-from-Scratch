@@ -12,9 +12,6 @@ class InputEmbeddings(nn.Module):
         return self.embedding(x) * math.sqrt(self.d_model)
 
 
-
-
-
 class PositionalEncodings(nn.Module):
     def __init__(self,d_model,seq_len):
         super().__init__()
@@ -33,3 +30,16 @@ class PositionalEncodings(nn.Module):
     def forward(self,x):
         x = x + self.pe[:,:x.shape[1],:]
         return x,self.pe
+
+
+class LayerNormalisation(nn.Module):
+    def __init__(self,d_model:int,eps=10**-6):
+        super().__init__()
+        self.weight = nn.Parameter(torch.ones(d_model))
+        self.bias = nn.Parameter(torch.zeros(d_model))
+        self.eps = eps
+
+    def forward(self,x):
+        mean = torch.mean(x,dim=-1,keepdim=True)
+        std = torch.std(x,dim=-1,keepdim=True)
+        return self.weight * (x-mean)/(std+self.eps) + self.bias
