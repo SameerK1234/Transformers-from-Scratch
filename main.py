@@ -39,6 +39,17 @@ class LayerNormalisation(nn.Module):
         self.bias = nn.Parameter(torch.zeros(d_model))
         self.eps = eps
 
+
+class FeedForwardLayer(nn.Module):
+    def __init__(self, d_model: int, d_ff: int, dropout: float):
+        super().__init__()
+        self.d_model = d_model
+        self.d_ff = d_ff
+        self.linear1 = nn.Linear(d_model, d_ff)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(dropout)
+        self.linear2 = nn.Linear(d_ff, d_model)
+
     def forward(self,x):
         mean = torch.mean(x,dim=-1,keepdim=True)
         std = torch.std(x,dim=-1,keepdim=True)
