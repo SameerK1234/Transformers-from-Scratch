@@ -32,7 +32,7 @@ class PositionalEncodings(nn.Module):
         return x,self.pe
 
 
-class LayerNormalisation(nn.Module):
+class LayerNormalization(nn.Module):
     def __init__(self,d_model:int,eps=10**-6):
         super().__init__()
         self.weight = nn.Parameter(torch.ones(d_model))
@@ -45,7 +45,7 @@ class LayerNormalisation(nn.Module):
         return self.weight * (x-mean)/(std+self.eps) + self.bias
 
 
-class FeedForwardLayer(nn.Module):
+class FeedForwardBlock(nn.Module):
     def __init__(self, d_model: int, d_ff: int, dropout: float):
         super().__init__()
         self.d_model = d_model
@@ -59,7 +59,7 @@ class FeedForwardLayer(nn.Module):
         return self.linear2(self.dropout(self.relu(self.linear1(x))))
 
 
-class MultiHeadAttention(nn.Module):
+class MultiHeadAttentionBlock(nn.Module):
     def __init__(self, d_model, num_heads, dropout):
         super().__init__()
         self.d_model = d_model
@@ -106,7 +106,7 @@ class ResidualConnection(nn.Module):
         super().__init__()
         self.d_model = d_model
         self.dropout = nn.Dropout(dropout)
-        self.norm = LayerNormalisation(d_model)
+        self.norm = LayerNormalization(d_model)
     def forward(self,x,sublayer):
         x = x + self.dropout(sublayer(self.norm(x))) 
         return x
@@ -137,12 +137,12 @@ class Encoder(nn.Module):
         return self.norm(x)
 
 class DecoderBlock(nn.Module):
-    def __init__(self,
-                   d_model,
+    def __init__(self,d_model,
                    self_attention_block: MultiHeadAttentionBlock,
                    cross_attention_block: MultiHeadAttentionBlock,
                    feed_forward_block: FeedForwardBlock,
                    dropout):
+            super().__init__()
         self.d_model = d_model
         self.self_attention_block = self_attention_block
         self.cross_attention_block = cross_attention_block
@@ -152,8 +152,8 @@ class DecoderBlock(nn.Module):
         self.residualconnection2 = ResidualConnection(d_model,dropout)
         self.residualconnection3 = ResidualConnection(d_model,dropout)
     def forward(self,x,encoder_output,src_mask,tgt_mask):
-        x = self.residualconnection1(x,lambda x:self.self_attention_block(x,x,x,tgt_mask)
-        x = self.residualconnection2(x,lambda x:self.cross_attention_block(x,encoder_output,encoder_output,src_mask)
+        x = self.residualconnection1(x,lambda x:self.self_attention_block(x,x,x,tgt_mask))
+        x = self.residualconnection2(x,lambda x:self.cross_attention_block(x,encoder_output,encoder_output,src_mask))
         x = self.residualconnection3(x,lambda x:self.feed_forward_block(x))
         return x
 class Decoder(nn.Module):
@@ -161,11 +161,11 @@ class Decoder(nn.Module):
         super().__init__()
         self.d_model = d_model
         self.layers = layers
-        self.norm = LayerNormalisation(d_model)
+        self.norm = LayerNormalization(d_model)
     def forward(self,x,encoder_output,src_mask,tgt_mask):
         for layer in self.layers:
             x = layer(x,encoder_output,src_mask,tgt_mask)
-            return self.norm(x)
+        return self.norm(x)
                        
         
 
