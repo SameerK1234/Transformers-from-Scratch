@@ -142,7 +142,7 @@ class DecoderBlock(nn.Module):
                    cross_attention_block: MultiHeadAttentionBlock,
                    feed_forward_block: FeedForwardBlock,
                    dropout):
-            super().__init__()
+        super().__init__()
         self.d_model = d_model
         self.self_attention_block = self_attention_block
         self.cross_attention_block = cross_attention_block
