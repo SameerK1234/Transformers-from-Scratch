@@ -113,7 +113,7 @@ class ResidualConnection(nn.Module):
 
 class EncoderBlock(nn.Module):
 
-    def __init__(self, d_model, self_attention_block: MultiHeadAttentionBlock, feed_forward_block: FeedForwardBlock,dropout) -> None:
+    def __init__(self, d_model, self_attention_block: MultiHeadAttentionBlock, feed_forward_block: FeedForwardBlock,dropout):
         super().__init__()
         self.self_attention_block = self_attention_block
         self.feed_forward_block = feed_forward_block
@@ -135,3 +135,37 @@ class Encoder(nn.Module):
         for layer in self.layers:
             x = layer(x, src_mask)
         return self.norm(x)
+
+class DecoderBlock(nn.Module):
+    def __init__(self,
+                   d_model,
+                   self_attention_block: MultiHeadAttentionBlock,
+                   cross_attention_block: MultiHeadAttentionBlock,
+                   feed_forward_block: FeedForwardBlock,
+                   dropout):
+        self.d_model = d_model
+        self.self_attention_block = self_attention_block
+        self.cross_attention_block = cross_attention_block
+        self.feed_forward_block = feed_forward_block
+        self.dropout = nn.Dropout(dropout)
+        self.residualconnection1 = ResidualConnection(d_model,dropout)
+        self.residualconnection2 = ResidualConnection(d_model,dropout)
+        self.residualconnection3 = ResidualConnection(d_model,dropout)
+    def forward(self,x,encoder_output,src_mask,tgt_mask):
+        x = self.residualconnection1(x,lambda x:self.self_attention_block(x,x,x,tgt_mask)
+        x = self.residualconnection2(x,lambda x:self.cross_attention_block(x,encoder_output,encoder_output,src_mask)
+        x = self.residualconnection3(x,lambda x:self.feed_forward_block(x))
+        return x
+class Decoder(nn.Module):
+    def __init__(self,d_model,layers:nn.ModuleList):
+        super().__init__()
+        self.d_model = d_model
+        self.layers = layers
+        self.norm = LayerNormalisation(d_model)
+    def forward(self,x,encoder_output,src_mask,tgt_mask):
+        for layer in self.layers:
+            x = layer(x,encoder_output,src_mask,tgt_mask)
+            return self.norm(x)
+                       
+        
+
