@@ -124,3 +124,14 @@ class EncoderBlock(nn.Module):
         x = self.residual_connections1(x, lambda x: self.self_attention_block(x, x, x, src_mask))
         x = self.residual_connections2(x, lambda x: self.feed_forward_block(x))
         return x
+
+class Encoder(nn.Module):
+    def __init__(self, d_model, layers: nn.ModuleList):
+        super().__init__()
+        self.layers = layers
+        self.norm = LayerNormalization(d_model)
+
+    def forward(self, x, src_mask):
+        for layer in self.layers:
+            x = layer(x, src_mask)
+        return self.norm(x)
