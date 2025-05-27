@@ -1,5 +1,7 @@
 # Transformers Implementation from Scratch
 
+![Project Logo](transformer)
+
 This project implements the Transformer architecture from scratch, a powerful model introduced by Vaswani et al. for sequence modeling and transduction tasks like machine translation, text summarization, and more.
 
 The Transformer model is composed of several key components and layers, which are described below along with the mathematical formulas used in each.
