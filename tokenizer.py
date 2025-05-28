@@ -36,8 +36,8 @@ def get_ds(config):
   train_ds = BilingualDataset(train_ds,tokenizer_src,tokenizer_tgt,config["lang_src"],config["lang_tgt"],config["seq_len"])
   train_ds = BilingualDataset(valid_ds,tokenizer_src,tokenizer_tgt,config["lang_src"],config["lang_tgt"],config["seq_len"])
 
-  max_src_len = []
-  max_tgt_len = []
+  max_src_len = 0
+  max_tgt_len = 0
   for item in ds_raw:
         src_ids = tokenizer_src.encode(item["translation"][config["lang_src"]]).ids
         tgt_ids = tokenizer_tgt.encode(item["translation"][config["lang_tgt"]]).ids
@@ -48,6 +48,6 @@ def get_ds(config):
              
           
   train_data_loader = DataLoader(train_ds,batch_size=config["batch_size"],shuffle=True)
-  valid_data_loader = DataLoader(valid_ds,batch_size=1,shuffle=True)
+  valid_data_loader = DataLoader(valid_ds,batch_size=1,shuffle=False)
 
   return train_data_loader,valid_data_loader,tokenizer_src,tokenizer_tgt
