@@ -31,9 +31,10 @@ def get_ds(config):
 
   train_ds_size = int(0.9*len(ds_raw)
   valid_ds_size = len(ds_raw) - train_ds_size
+  train_ds,valid_ds = random_split(ds_raw,[train_ds_size,valid_ds_size])
 
-  train_ds = BilingualDataset(train_ds_size,tokenizer_src,tokenizer_tgt,config["lang_src"],config["lang_tgt"],config["seq_len"])
-  train_ds = BilingualDataset(valid_ds_size,tokenizer_src,tokenizer_tgt,config["lang_src"],config["lang_tgt"],config["seq_len"])
+  train_ds = BilingualDataset(train_ds,tokenizer_src,tokenizer_tgt,config["lang_src"],config["lang_tgt"],config["seq_len"])
+  train_ds = BilingualDataset(valid_ds,tokenizer_src,tokenizer_tgt,config["lang_src"],config["lang_tgt"],config["seq_len"])
 
   max_src_len = []
   max_tgt_len = []
