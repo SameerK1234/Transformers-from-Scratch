@@ -28,7 +28,7 @@ class BilingualDataset(Dataset):
         dec_input_tokens = self.tokenizer_tgt.encode(tgt_text).ids
 
         enc_num_padding_tokens = self.seq_len - len(enc_input_tokens) - 2 #(for sos and eos)
-        dec_num_padding_tokens = self.seq_len - len(enc_input_tokens) - 1 #(for sos)
+        dec_num_padding_tokens = self.seq_len - len(dec_input_tokens) - 1 #(for sos)
 
         if enc_num_padding_tokens < 0 or dec_num_padding_tokens <0:
             raise ValueError("Sentence is too long")
