@@ -50,3 +50,30 @@ def get_ds(config):
   valid_data_loader = DataLoader(valid_ds,batch_size=1,shuffle=False)
 
   return train_data_loader,valid_data_loader,tokenizer_src,tokenizer_tgt
+
+def get_model(config,src_vocab_size,tgt_vocab_size):
+  model = build_transformer(src_vocab_size,tgt_vocab_size,config["seq_len"],config["seq_len"])
+  return model
+
+def train_model():
+  if torch.cuda.is_available():
+     device = torch.device("cuda")
+  else:
+     device = torch.device("cpu")
+     print("gpu not available")
+    
+  Path(f"{config['datasource']}_{config['model_folder']}").mkdir(parents=True, exist_ok=True)
+  
+  train_data_loader,valid_data_loader,tokenizer_src,tokenizer_tgt = get_ds(config)
+
+
+  
+  
+
+  
+
+  
+  
+
+
+
