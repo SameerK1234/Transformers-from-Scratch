@@ -59,7 +59,7 @@ def get_model(config,src_vocab_size,tgt_vocab_size):
   model = build_transformer(src_vocab_size,tgt_vocab_size,config["seq_len"],config["seq_len"])
   return model
 
-def train_model():
+def train_model(config):
   if torch.cuda.is_available():
      device = torch.device("cuda")
   else:
