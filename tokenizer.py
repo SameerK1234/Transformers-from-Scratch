@@ -73,7 +73,7 @@ def train_model():
   model = get_model(config,tokenizer_src.get_vocab_size(),tokenizer_tgt.get_vocab_size()).to(device)
 
   writer = SummaryWriter(config["experiment_name"])
-  optimizer = torch.optims.Adam(model.parameters(),lr=config["learning_rate"],eps=10**-9)
+  optimizer = torch.optim.Adam(model.parameters(),lr=config["learning_rate"],eps=10**-9)
 
   preload = config["preload"]
   model_filename = latest_weights_file_path(config) if preload == 'latest' else get_weights_file_path(config, preload) if preload else None
@@ -94,7 +94,7 @@ def train_model():
 
   for epoch in range(initial_epoch,config["num_epochs"]):
     model.train()
-    batch_iterator= tqdm(train_dataloader,desc=f"Processing epoch {epoch}")
+    batch_iterator= tqdm(train_data_loader,desc=f"Processing epoch {epoch}")
     for batch in batch_iterator:
       encoder_input = batch["encoder_input"].to(device)
       decoder_input = batch["decoder_input"].to(device)
