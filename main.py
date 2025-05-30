@@ -167,7 +167,14 @@ class Decoder(nn.Module):
             x = layer(x,encoder_output,src_mask,tgt_mask)
         return self.norm(x)
                        
-        
+class ProjectionLayer(nn.Module):
+    def __init__(self,d_model,vocab_size):
+        super().__init__()
+        self.d_model = d_model
+        self.vocab_size = vocab_size
+        self.proj_layer = nn.Linear(d_model,vocab_size)
+    def forward(self,x):
+        return self.proj_layer(x)     
 
 class Transformer(nn.Module):
     def __init__(self,encoder:Encoder,
