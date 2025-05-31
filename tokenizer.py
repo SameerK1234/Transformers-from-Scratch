@@ -90,7 +90,7 @@ def train_model(config):
   else:
     print(f"No pre existing model found, training from scratch")
 
-  loss_function = nn.CrossEntropyLoss(ignore_index=tokenizer_src.token_id("[PAD]")).to(device)
+  loss_function = nn.CrossEntropyLoss(ignore_index=tokenizer_src.token_to_id("[PAD]")).to(device)
 
   for epoch in range(initial_epoch,config["num_epochs"]):
     model.train()
